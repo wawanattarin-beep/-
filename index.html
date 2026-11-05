@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>จดหมายพี่รหัส · IT & Innovation BU</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf3e4;--card:#fffaf0;--ink:#3b2f2a;--sub:#8a7566;--acc:#d9534f;--acc2:#f0b429;--env:#f2d9a8;--env2:#e6c488;--line:#e7d5b3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1f1a17;--card:#2a2420;--ink:#f3e8d8;--sub:#b8a692;--env:#8c6d3c;--env2:#74592f;--line:#4a3d33}}
+:root[data-theme="dark"]{--bg:#1f1a17;--card:#2a2420;--ink:#f3e8d8;--sub:#b8a692;--env:#8c6d3c;--env2:#74592f;--line:#4a3d33}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sarabun',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center}
+main{width:100%;max-width:560px;padding:24px 18px 48px;text-align:center}
+h1{font-family:'Mali','Sarabun',cursive;font-size:1.7rem;margin:.2em 0}
+.sub{color:var(--sub);margin:0 0 20px}
+input,button{font:inherit}
+input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 20px;background:var(--acc);color:#fff;font-weight:600;margin-top:12px}
+button.ghost{background:transparent;color:var(--acc);border:2px solid var(--acc)}
+.err{color:var(--acc);min-height:1.4em;margin-top:8px}
+.env{position:relative;width:min(320px,100%);height:210px;margin:28px auto 8px;perspective:900px;display:none}
+.env.show{display:block}
+.back{position:absolute;inset:60px 0 0;background:var(--env2);border-radius:6px 6px 12px 12px}
+.paper{position:absolute;left:14px;right:14px;top:70px;height:150px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px;transition:transform 1s .5s,top 1s .5s;z-index:2;text-align:left;overflow:hidden}
+.front{position:absolute;inset:60px 0 0;z-index:3;border-radius:6px 6px 12px 12px;background:linear-gradient(135deg,var(--env) 50%,transparent 50%) left/50% 100% no-repeat,linear-gradient(225deg,var(--env) 50%,transparent 50%) right/50% 100% no-repeat;pointer-events:none}
+.flap{position:absolute;left:0;right:0;top:60px;height:90px;background:var(--env);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s;z-index:4}
+.seal{position:absolute;left:50%;top:128px;transform:translate(-50%,-50%);font-size:1.6rem;z-index:5;transition:opacity .3s}
+.env.open .flap{transform:rotateX(180deg);z-index:1}.env.open .seal{opacity:0}
+.env.open .paper{top:-10px;height:210px;z-index:6}
+.letter{display:none;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-top:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.letter.show{display:block}
+.letter h2{font-family:'Mali','Sarabun',cursive;margin:0 0 8px;font-size:1.25rem}
+.hint{background:rgba(240,180,41,.18);border-left:4px solid var(--acc2);padding:10px 12px;border-radius:6px;margin:10px 0;line-height:1.6}
+.reveal{font-family:'Mali','Sarabun',cursive;font-size:1.4rem;color:var(--acc);margin:8px 0}
+.small{color:var(--sub);font-size:.9rem}
+details{margin-top:28px;text-align:left}summary{cursor:pointer;color:var(--sub)}
+.tw{overflow-x:auto;max-height:320px;margin-top:10px}table{border-collapse:collapse;width:100%;font-size:.85rem}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+</style>
+</head>
+<body>
+<main>
+<div style="font-size:2.2rem">💌</div>
+<h1>จดหมายจากพี่รหัส</h1>
+<p class="sub">พิมพ์รหัสนักศึกษาของน้องเพื่อเปิดจดหมาย · คณะเทคโนโลยีสารสนเทศและนวัตกรรม</p>
+<input id="q" placeholder="รหัสนักศึกษา เช่น 169070xxxx" autocomplete="off" inputmode="numeric" maxlength="24">
+<button id="go">เปิดจดหมาย</button>
+<div class="err" id="err"></div>
+<div class="env" id="env"><div class="back"></div><div class="paper"><b>ถึง <span id="pn"></span></b><br><span class="small">มีใครบางคนฝากข้อความมาให้…</span></div><div class="front"></div><div class="flap"></div><div class="seal">❤️</div></div>
+<div class="letter" id="letter">
+<h2>ถึง <span id="ln"></span> น้องรหัสที่น่ารัก</h2>
+<div>พี่รหัสของน้องฝากคำใบ้มาให้ ลองเดาดูนะ:</div>
+<div class="hint" id="hint"></div>
+<div class="small" id="sib"></div>
+</div>
+<details><summary>โหมดทีมงาน</summary>
+<input id="pw" type="password" placeholder="รหัสผ่านทีมงาน" style="margin-top:10px">
+<button id="ad" class="ghost">ดูตารางจับคู่ทั้งหมด</button>
+<div class="tw" id="tw"></div>
+</details>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+
+async function postJSON(path, data) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
+    body: JSON.stringify(data)
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+  return result;
+}
+
+async function show() {
+  const studentId = $("q").value.replace(/\s/g, "").toLowerCase();
+  $("err").textContent = "";
+  $("go").disabled = true;
+  $("go").textContent = "กำลังเปิดจดหมาย…";
+  $("letter").classList.remove("show");
+  $("env").classList.remove("show", "open");
+
+  try {
+    if (!studentId) throw new Error("กรอกรหัสนักศึกษาก่อนนะ");
+    const result = await postJSON("/api/letter", { studentId });
+
+    $("pn").textContent = $("ln").textContent = result.juniorName;
+    $("hint").textContent = result.hint;
+    $("sib").textContent = result.siblingMessage;
+
+    const envelope = $("env");
+    envelope.classList.add("show");
+    setTimeout(() => envelope.classList.add("open"), 100);
+    setTimeout(() => {
+      envelope.classList.remove("show");
+      $("letter").classList.add("show");
+    }, 1900);
+  } catch (error) {
+    $("err").textContent = error.message;
+  } finally {
+    $("go").disabled = false;
+    $("go").textContent = "เปิดจดหมาย";
+  }
+}
+
+$("go").addEventListener("click", show);
+$("q").addEventListener("keydown", event => {
+  if (event.key === "Enter") show();
+});
+
+$("ad").addEventListener("click", async () => {
+  const button = $("ad");
+  const output = $("tw");
+  button.disabled = true;
+  button.textContent = "กำลังตรวจสอบ…";
+  output.textContent = "";
+
+  try {
+    const result = await postJSON("/api/admin", { password: $("pw").value });
+    const table = document.createElement("table");
+    const head = document.createElement("tr");
+    for (const label of ["น้อง", "พี่รหัส"]) {
+      const th = document.createElement("th");
+      th.textContent = label;
+      head.appendChild(th);
+    }
+    table.appendChild(head);
+
+    for (const row of result.rows) {
+      const tr = document.createElement("tr");
+      const juniorCell = document.createElement("td");
+      const seniorCell = document.createElement("td");
+      juniorCell.textContent = row.junior;
+      seniorCell.textContent = row.senior;
+      tr.append(juniorCell, seniorCell);
+      table.appendChild(tr);
+    }
+    output.replaceChildren(table);
+  } catch (error) {
+    output.textContent = error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "ดูตารางจับคู่ทั้งหมด";
+  }
+});
+</script>
+</body>
+</html>
